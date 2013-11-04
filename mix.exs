@@ -32,6 +32,8 @@ defmodule HttpServer.Mixfile do
 
   def deps(:prod) do
     [
+      {:ranch, github: "extend/ranch", ref: "0.8.5", override: true},
+      {:cowlib, github: "extend/cowlib", ref: "0.3.0", override: true},
       {:cowboy, github: "extend/cowboy"}
     ]
   end
