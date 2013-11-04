@@ -1,4 +1,5 @@
-# HTTPServer
+HTTPServer [![Build Status](https://secure.travis-ci.org/parroty/http_server.png?branch=master "Build Status")](http://travis-ci.org/parroty/http_server)
+============
 A simple and self-contained HTTP Server for elixir.
 It's intended for simple testing of HTTP request/response without setting up stand-alone http server.
 
