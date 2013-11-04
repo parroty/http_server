@@ -25,3 +25,6 @@ defmodule HttpServerTest do
   end
 end
 ```
+
+### TODO
+- Add methods to appropriately shutdown the listener, for restarting it with different configuration. At the moment, different listener needs to be setup on a different port.
