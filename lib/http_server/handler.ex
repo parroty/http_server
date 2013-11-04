@@ -2,7 +2,6 @@ defmodule HttpServer.Handler do
   @moduledoc """
   Provides handler for cowboy
   """
-  @behaviour :cowboy_http_handler
   @ets_table :httpserver_handler
   @ets_key   :response
   @default_response "Hello World"
