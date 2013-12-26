@@ -6,12 +6,14 @@ defmodule HttpServer.Handler do
   @ets_key   :response
   @default_response "Hello World"
 
-  def define_response(response) do
-    response = response || @default_response
+  def define_response(response, wait_time) do
+    response  = response || @default_response
+    wait_time = wait_time || 0
+
     if :ets.info(@ets_table) == :undefined do
       :ets.new(@ets_table, [:set, :public, :named_table])
     end
-    :ets.insert(@ets_table, {@ets_key, response})
+    :ets.insert(@ets_table, {@ets_key, {response, wait_time}})
   end
 
   def init({_any, :http}, req, []) do
@@ -19,9 +21,24 @@ defmodule HttpServer.Handler do
   end
 
   def handle(req, state) do
-    response = :ets.lookup(@ets_table, @ets_key)[@ets_key]
+    {response, wait_time} = :ets.lookup(@ets_table, @ets_key)[@ets_key]
+    wait_for(wait_time)
     {:ok, req} = :cowboy_req.reply 200, [], response, req
     {:ok, req, state}
+  end
+
+  defp wait_for(duration) do
+    if duration > 0 do
+      current_pid = self
+      spawn fn ->
+        :timer.sleep(duration)
+        current_pid <- :completed
+      end
+
+      receive do
+        :completed -> nil  # do nothing
+      end
+    end
   end
 
   def terminate(_reason, _request, _state) do
