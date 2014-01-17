@@ -32,7 +32,7 @@ defmodule HttpServer.Handler do
       current_pid = self
       spawn fn ->
         :timer.sleep(duration)
-        current_pid <- :completed
+        send current_pid, :completed
       end
 
       receive do
