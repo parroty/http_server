@@ -26,7 +26,7 @@ defmodule HttpServer.Mixfile do
   def deps(:dev) do
     deps(:prod) ++
       [
-        {:httpotion, github: "parroty/httpotion", branch: "version"},
+        {:httpotion, github: "myfreeweb/httpotion"},
       ]
   end
 
