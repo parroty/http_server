@@ -12,7 +12,7 @@ defmodule HttpServer.Mixfile do
   # Configuration for the OTP application
   def application do
     [
-      applications: [:ranch, :crypto, :cowboy],
+      applications: [ :crypto, :cowboy],
       mod: { HttpServer, [] }
     ]
   end
@@ -32,9 +32,7 @@ defmodule HttpServer.Mixfile do
 
   def deps(:prod) do
     [
-      {:ranch, github: "extend/ranch", ref: "0.8.5", override: true},
-      {:cowlib, github: "extend/cowlib", ref: "0.3.0", override: true},
-      {:cowboy, github: "extend/cowboy"}
+      {:cowboy, github: "extend/cowboy", tag: "0.9.0"}
     ]
   end
 end
