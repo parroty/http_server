@@ -1,4 +1,4 @@
-[ "cowboy": {:git, "git://github.com/extend/cowboy.git", "6672ea04155a075e60381413bf9b65b3974b7d57", []},
+[ "cowboy": {:git, "git://github.com/extend/cowboy.git", "6672ea04155a075e60381413bf9b65b3974b7d57", [tag: "0.9.0"]},
   "cowlib": {:git, "git://github.com/extend/cowlib.git", "34a39ef28ca841fb9233ce9df3ec654eb321c5e5", [ref: "0.3.0"]},
   "httpotion": {:git, "git://github.com/myfreeweb/httpotion.git", "3f97f62bbf40e7b941e3b52dd130cf95b6b3fb6e", []},
   "ibrowse": {:git, "git://github.com/cmullaparthi/ibrowse.git", "2e13b63788f48934ab9b075b9d741bfa814d0d6d", []},
