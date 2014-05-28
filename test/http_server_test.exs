@@ -3,6 +3,7 @@ defmodule HttpServerTest do
 
   setup_all do
     HTTPotion.start
+    :ok
   end
 
   test "default server response" do
