@@ -1,5 +1,5 @@
 defmodule HttpServer do
-  use Application.Behaviour
+  use Application
 
   def start, do: start([], [])
   def start(args), do: start([], args)
