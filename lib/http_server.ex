@@ -7,6 +7,9 @@ defmodule HttpServer do
   def start, do: start([], [])
   def start(args), do: start([], args)
   def start(_type, args) do
+    Application.ensure_started(:crypto)
+    Application.ensure_started(:cowboy)
+
     path = args[:path] || "/"
     port = args[:port] || @default_port
     HttpServer.Handler.define_response(args[:response], args[:wait_time])
