@@ -32,7 +32,7 @@ defmodule HttpServer.Mixfile do
 
   def deps(:prod) do
     [
-      {:cowboy, github: "extend/cowboy", tag: "0.9.0"}
+      {:cowboy, "~> 1.0.0"}
     ]
   end
 end
