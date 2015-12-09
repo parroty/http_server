@@ -23,7 +23,12 @@ defmodule HttpServer.Handler do
   def handle(req, state) do
     {response, wait_time} = :ets.lookup(@ets_table, @ets_key)[@ets_key]
     wait_for(wait_time)
-    {:ok, req} = :cowboy_req.reply 200, [], response, req
+    case response do
+      {status, headers, body} ->
+        {:ok, req} = :cowboy_req.reply status, headers, body, req
+      body ->
+        {:ok, req} = :cowboy_req.reply 200, [], body, req
+    end
     {:ok, req, state}
   end
 

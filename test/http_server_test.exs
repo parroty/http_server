@@ -31,4 +31,17 @@ defmodule HttpServerTest do
     assert(:timer.now_diff(e, s) >= 800_000)  # 0.8 sec
     HttpServer.stop(4001)
   end
+
+  test "custom status code and headers" do
+    HttpServer.start(
+      path: "/test",
+      port: 4000,
+      response: {201, [{"X-Custom", "My-Header"}], "Created"}
+    )
+
+    response = HTTPotion.get("http://localhost:4000/test")
+    assert(response.body == "Created")
+    assert(response.status_code == 201)
+    assert(response.headers[:"X-Custom"] == "My-Header")
+  end
 end
