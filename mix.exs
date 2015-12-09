@@ -3,7 +3,7 @@ defmodule HttpServer.Mixfile do
 
   def project do
     [ app: :http_server,
-      version: "0.0.1",
+      version: "0.0.2",
       elixir: "~> 0.14.1 or ~> 0.15.0 or ~> 1.0 or ~> 1.1",
       deps: deps(Mix.env)
     ]
