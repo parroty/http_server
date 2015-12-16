@@ -4,7 +4,7 @@ defmodule HttpServer.Mixfile do
   def project do
     [ app: :http_server,
       version: "0.0.2",
-      elixir: "~> 0.14.1 or ~> 0.15.0 or ~> 1.0 or ~> 1.1",
+      elixir: "~> 1.0",
       deps: deps(Mix.env)
     ]
   end
@@ -26,13 +26,14 @@ defmodule HttpServer.Mixfile do
   def deps(:dev) do
     deps(:prod) ++
       [
-        {:httpotion, github: "myfreeweb/httpotion"},
+        {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
+        {:httpotion, "~> 2.1.0"}
       ]
   end
 
   def deps(:prod) do
     [
-      {:cowboy, "~> 1.0.0"}
+      {:cowboy, "~> 1.0"}
     ]
   end
 end
