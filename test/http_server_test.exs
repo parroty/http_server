@@ -24,9 +24,9 @@ defmodule HttpServerTest do
     HttpServer.start(path: "/test", port: 4001,
                      response: "Custom Response", wait_time: 1000) # 1.0 sec
 
-    s = :erlang.now
+    s = :os.timestamp
     response = HTTPotion.get("http://localhost:4001/test")
-    e = :erlang.now
+    e = :os.timestamp
     assert(response.body == "Custom Response")
     assert(:timer.now_diff(e, s) >= 800_000)  # 0.8 sec
     HttpServer.stop(4001)
