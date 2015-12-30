@@ -15,4 +15,4 @@ dependencies:
     - yes | mix deps.get
 test:
   override:
-    - mix test --no-start
+    - mix test
