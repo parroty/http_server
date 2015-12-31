@@ -44,4 +44,29 @@ defmodule HttpServerTest do
     assert(response.status_code == 201)
     assert(response.headers[:"X-Custom"] == "My-Header")
   end
+
+  test "custom function" do
+    HttpServer.start(
+      path: "/test",
+      port: 4000,
+      response: fn(req) ->
+        assert req.headers["x-test-header"] == "My-Value"
+        assert req.host == "localhost"
+        assert req.query_params["foo"] == "bar"
+        assert req.query_params["abc"] == "def"
+        assert req.post_params["body"] == "param"
+        assert req.body == "body=param"
+        {"localhost", _} = :cowboy_req.host(req.req)
+        {202, [{"X-Custom", "My-Dynamic-Header"}], "Accepted"}
+      end
+    )
+
+    response = HTTPotion.post("http://localhost:4000/test?foo=bar&abc=def", [
+      body: "body=param",
+      headers: ["X-Test-Header": "My-Value"],
+    ])
+    assert(response.body == "Accepted")
+    assert(response.status_code == 202)
+    assert(response.headers[:"X-Custom"] == "My-Dynamic-Header")
+  end
 end
