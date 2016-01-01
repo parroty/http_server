@@ -61,6 +61,10 @@ defmodule HttpServer.Handler do
     {port, _} = :cowboy_req.port(req)
     {method, _} = :cowboy_req.method(req)
 
+    headers = Enum.map(headers, fn({k, v}) -> {String.to_atom(k), v} end)
+    query_params = Enum.map(query_params, fn({k, v}) -> {String.to_atom(k), v} end)
+    post_params = Enum.map(post_params, fn({k, v}) -> {String.to_atom(k), v} end)
+
     %{
       method: method,
       host: host,

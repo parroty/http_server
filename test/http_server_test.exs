@@ -50,11 +50,11 @@ defmodule HttpServerTest do
       path: "/test",
       port: 4000,
       response: fn(req) ->
-        assert req.headers["x-test-header"] == "My-Value"
+        assert req.headers[:"x-test-header"] == "My-Value"
         assert req.host == "localhost"
-        assert req.query_params["foo"] == "bar"
-        assert req.query_params["abc"] == "def"
-        assert req.post_params["body"] == "param"
+        assert req.query_params[:foo] == "bar"
+        assert req.query_params[:abc] == "def"
+        assert req.post_params[:body] == "param"
         assert req.body == "body=param"
         {"localhost", _} = :cowboy_req.host(req.req)
         {202, [{"X-Custom", "My-Dynamic-Header"}], "Accepted"}
