@@ -26,8 +26,13 @@ defmodule HttpServer.Handler do
     case response do
       {status, headers, body} ->
         {:ok, req} = :cowboy_req.reply status, headers, body, req
-      body ->
-        {:ok, req} = :cowboy_req.reply 200, [], body, req
+      response ->
+        if is_function(response) do
+          {status, headers, body} = response.(req_values(req))
+          {:ok, req} = :cowboy_req.reply status, headers, body, req
+        else
+          {:ok, req} = :cowboy_req.reply 200, [], response, req
+        end
     end
     {:ok, req, state}
   end
@@ -44,6 +49,32 @@ defmodule HttpServer.Handler do
         :completed -> nil  # do nothing
       end
     end
+  end
+
+  # Parse the cowboy request into something that's easy to pull values out of.
+  defp req_values(req) do
+    {headers, _} = :cowboy_req.headers(req)
+    {query_params, _} = :cowboy_req.qs_vals(req)
+    {:ok, body, _} = :cowboy_req.body(req)
+    {host, _} = :cowboy_req.host(req)
+    {:ok, post_params, _} = :cowboy_req.body_qs(req)
+    {port, _} = :cowboy_req.port(req)
+    {method, _} = :cowboy_req.method(req)
+
+    headers = Enum.map(headers, fn({k, v}) -> {String.to_atom(k), v} end)
+    query_params = Enum.map(query_params, fn({k, v}) -> {String.to_atom(k), v} end)
+    post_params = Enum.map(post_params, fn({k, v}) -> {String.to_atom(k), v} end)
+
+    %{
+      method: method,
+      host: host,
+      port: port,
+      headers: headers,
+      query_params: query_params,
+      post_params: post_params,
+      body: body,
+      req: req
+    }
   end
 
   def terminate(_reason, _request, _state) do
