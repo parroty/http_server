@@ -43,6 +43,7 @@ defmodule HttpServerTest do
     assert(response.body == "Created")
     assert(response.status_code == 201)
     assert(response.headers[:"X-Custom"] == "My-Header")
+    HttpServer.stop(4000)
   end
 
   test "custom function" do
@@ -68,5 +69,6 @@ defmodule HttpServerTest do
     assert(response.body == "Accepted")
     assert(response.status_code == 202)
     assert(response.headers[:"X-Custom"] == "My-Dynamic-Header")
+    HttpServer.stop(4000)
   end
 end
