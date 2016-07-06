@@ -26,7 +26,7 @@ defmodule HttpServer.Mixfile do
   def deps(:dev) do
     deps(:prod) ++
       [
-        {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
+        {:ibrowse,"~> 4.2.2"},
         {:httpotion, "~> 2.1.0"}
       ]
   end
