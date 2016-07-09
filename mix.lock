@@ -1,5 +1,5 @@
-%{"cowboy": {:hex, :cowboy, "1.0.4"},
-  "cowlib": {:hex, :cowlib, "1.0.2"},
-  "httpotion": {:hex, :httpotion, "2.1.0"},
-  "ibrowse": {:git, "https://github.com/cmullaparthi/ibrowse.git", "ea3305d21f37eced4fac290f64b068e56df7de80", [tag: "v4.1.2"]},
-  "ranch": {:hex, :ranch, "1.2.0"}}
+%{"cowboy": {:hex, :cowboy, "1.0.4", "a324a8df9f2316c833a470d918aaf73ae894278b8aa6226ce7a9bf699388f878", [:rebar, :make], [{:cowlib, "~> 1.0.0", [hex: :cowlib, optional: false]}, {:ranch, "~> 1.0", [hex: :ranch, optional: false]}]},
+  "cowlib": {:hex, :cowlib, "1.0.2", "9d769a1d062c9c3ac753096f868ca121e2730b9a377de23dec0f7e08b1df84ee", [:make], []},
+  "httpotion": {:hex, :httpotion, "2.1.0", "3fe84fbd13d4560c2514da656d022b1191a079178ee4992d245fc3c33c01ee18", [:mix], []},
+  "ibrowse": {:hex, :ibrowse, "4.2.2", "b32b5bafcc77b7277eff030ed32e1acc3f610c64e9f6aea19822abcadf681b4b", [:rebar3], []},
+  "ranch": {:hex, :ranch, "1.2.1", "a6fb992c10f2187b46ffd17ce398ddf8a54f691b81768f9ef5f461ea7e28c762", [:make], []}}
