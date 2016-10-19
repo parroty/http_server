@@ -64,11 +64,19 @@ defmodule HttpServer.Handler do
       first..last ->
         new_body = Enum.slice(:erlang.binary_to_list(body), first..(last - 1)) |> :erlang.list_to_binary
         new_headers = [{"Content-Range", "#{first}-#{last}"} | headers]
+
+        # If we were going to respond with a 200, respond with
+        # 206 Partial Content instead. This is basically the behaviour you'll
+        # see in a browser.
         new_status = if status == 200, do: 206, else: status
+
         {new_status, new_headers, new_body}
     end
   end
 
+  # The spec is here: https://tools.ietf.org/html/rfc7233#section-2.1
+  # Note that this does not implement the full spec, only the most common form
+  # of byte range requests.
   defp parse_byte_range(range_str) do
     case Regex.run(~r/bytes=(\d+)-(\d*)/i, range_str) do
       [_, first_str, last_str] ->
