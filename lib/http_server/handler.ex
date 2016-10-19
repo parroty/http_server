@@ -24,21 +24,22 @@ defmodule HttpServer.Handler do
     {range_header, req} = :cowboy_req.header("range", req)
     {response, wait_time} = :ets.lookup(@ets_table, @ets_key)[@ets_key]
     wait_for(wait_time)
-    case response do
-      {status, headers, body} ->
-        {status, headers, body} = apply_byte_range({status, headers, body}, range_header)
-        {:ok, req} = :cowboy_req.reply status, headers, body, req
-      response ->
-        if is_function(response) do
-          {status, headers, body} =
-            response.(req_values(req))
-            |> apply_byte_range(range_header)
-          {:ok, req} = :cowboy_req.reply status, headers, body, req
-        else
-          {status, headers, body} = apply_byte_range({200, [], response}, range_header)
-          {:ok, req} = :cowboy_req.reply status, headers, body, req
-        end
-    end
+    {:ok, req} =
+      case response do
+        {status, headers, body} ->
+          {status, headers, body} = apply_byte_range({status, headers, body}, range_header)
+          :cowboy_req.reply status, headers, body, req
+        response ->
+          if is_function(response) do
+            {status, headers, body} =
+              response.(req_values(req))
+              |> apply_byte_range(range_header)
+            :cowboy_req.reply status, headers, body, req
+          else
+            {status, headers, body} = apply_byte_range({200, [], response}, range_header)
+            :cowboy_req.reply status, headers, body, req
+          end
+      end
     {:ok, req, state}
   end
 
