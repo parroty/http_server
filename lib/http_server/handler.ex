@@ -21,20 +21,76 @@ defmodule HttpServer.Handler do
   end
 
   def handle(req, state) do
+    {range_header, req} = :cowboy_req.header("range", req)
     {response, wait_time} = :ets.lookup(@ets_table, @ets_key)[@ets_key]
     wait_for(wait_time)
-    case response do
-      {status, headers, body} ->
-        {:ok, req} = :cowboy_req.reply status, headers, body, req
-      response ->
-        if is_function(response) do
-          {status, headers, body} = response.(req_values(req))
-          {:ok, req} = :cowboy_req.reply status, headers, body, req
-        else
-          {:ok, req} = :cowboy_req.reply 200, [], response, req
-        end
-    end
+    {:ok, req} =
+      case response do
+        {status, headers, body} ->
+          {status, headers, body} = apply_byte_range({status, headers, body}, range_header)
+          :cowboy_req.reply status, headers, body, req
+        response ->
+          if is_function(response) do
+            {status, headers, body} =
+              response.(req_values(req))
+              |> apply_byte_range(range_header)
+            :cowboy_req.reply status, headers, body, req
+          else
+            {status, headers, body} = apply_byte_range({200, [], response}, range_header)
+            :cowboy_req.reply status, headers, body, req
+          end
+      end
     {:ok, req, state}
+  end
+
+  defp normalize_byte_range(body, range_str) do
+    if range_str == :undefined do
+      nil
+    else
+      case parse_byte_range(range_str) do
+        nil -> nil
+        {:error, {:unexpected_range_header_format, _}} -> nil
+        {first, nil} ->
+          first..byte_size(body)
+        {first, last} ->
+          first..last
+      end
+    end
+  end
+
+  defp apply_byte_range({status, headers, body}, range_str) do
+    case normalize_byte_range(body, range_str) do
+      nil -> {status, headers, body}
+      first..last ->
+        new_body = Enum.slice(:erlang.binary_to_list(body), first..(last - 1)) |> :erlang.list_to_binary
+        new_headers = [{"Content-Range", "#{first}-#{last}"} | headers]
+
+        # If we were going to respond with a 200, respond with
+        # 206 Partial Content instead. This is basically the behaviour you'll
+        # see in a browser.
+        new_status = if status == 200, do: 206, else: status
+
+        {new_status, new_headers, new_body}
+    end
+  end
+
+  # The spec is here: https://tools.ietf.org/html/rfc7233#section-2.1
+  # Note that this does not implement the full spec, only the most common form
+  # of byte range requests.
+  defp parse_byte_range(range_str) do
+    case Regex.run(~r/bytes=(\d+)-(\d*)/i, range_str) do
+      [_, first_str, last_str] ->
+        {first, _} = Integer.parse(first_str)
+        last =
+          if last_str == "" do
+            nil
+          else
+            {last, _} = Integer.parse(last_str)
+            last
+          end
+        {first, last}
+      nil -> {:error, {:unexpected_range_header_format, "expected \"Range: bytes=start-end\""}}
+    end
   end
 
   defp wait_for(duration) do

@@ -71,4 +71,28 @@ defmodule HttpServerTest do
     assert(response.headers[:"X-Custom"] == "My-Dynamic-Header")
     HttpServer.stop(4000)
   end
+
+  test "range request" do
+    HttpServer.start(path: "/", port: 4000, response: "Custom Response")
+
+    response = HTTPotion.get("http://localhost:4000", headers: ["Range": "bytes=2-5"])
+    assert(response.headers[:"Content-Range"] == "2-5")
+    assert(response.body == "sto")
+
+    response = HTTPotion.get("http://localhost:4000", headers: ["Range": "bytes=12-15"])
+    assert(response.headers[:"Content-Range"] == "12-15")
+    assert(response.body == "nse")
+
+    response = HTTPotion.get("http://localhost:4000", headers: ["Range": "bytes=0-"])
+    assert(response.headers[:"Content-Range"] == "0-15")
+    assert(response.body == "Custom Response")
+
+    # In case someone wants to implement their own special range header
+    # functionality, don't fail if it's not a valid byte range request.
+    response = HTTPotion.get("http://localhost:4000", headers: ["Range": "invalid"])
+    assert(response.headers[:"Content-Range"] == nil)
+    assert(response.body == "Custom Response")
+
+    HttpServer.stop(4000)
+  end
 end
