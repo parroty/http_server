@@ -64,11 +64,35 @@ defmodule HttpServerTest do
 
     response = HTTPotion.post("http://localhost:4000/test?foo=bar&abc=def", [
       body: "body=param",
-      headers: ["X-Test-Header": "My-Value"],
+      headers: ["X-Test-Header": "My-Value", "Content-Type": "x-www-form-urlencoded"],
     ])
     assert(response.body == "Accepted")
     assert(response.status_code == 202)
     assert(response.headers[:"X-Custom"] == "My-Dynamic-Header")
+    HttpServer.stop(4000)
+  end
+
+  test "json" do
+    HttpServer.start(
+      path: "/test",
+      port: 4000,
+      response: fn(req) ->
+        {200, [], req.body}
+      end
+    )
+
+    json =
+      (0..100_000)
+      |> Enum.map(fn(n) -> "\"hello#{n}\": \"world\"" end)
+      |> Enum.join(", ")
+      |> (&("{#{&1}}")).()
+
+    response = HTTPotion.post("http://localhost:4000/test", [
+      body: json,
+      headers: ["X-Test-Header": "My-Value", "Content-Type": "application/json"],
+    ])
+
+    assert(response.body == json)
     HttpServer.stop(4000)
   end
 

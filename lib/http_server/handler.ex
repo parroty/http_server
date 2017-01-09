@@ -113,13 +113,19 @@ defmodule HttpServer.Handler do
     {query_params, _} = :cowboy_req.qs_vals(req)
     {:ok, body, _} = :cowboy_req.body(req)
     {host, _} = :cowboy_req.host(req)
-    {:ok, post_params, _} = :cowboy_req.body_qs(req)
     {port, _} = :cowboy_req.port(req)
     {method, _} = :cowboy_req.method(req)
 
     headers = Enum.map(headers, fn({k, v}) -> {String.to_atom(k), v} end)
     query_params = Enum.map(query_params, fn({k, v}) -> {String.to_atom(k), v} end)
-    post_params = Enum.map(post_params, fn({k, v}) -> {String.to_atom(k), v} end)
+
+    post_params =
+      if headers[:"content-type"] == "x-www-form-urlencoded" do
+        {:ok, body_qs, _} = :cowboy_req.body_qs(req)
+        Enum.map(body_qs, fn({k, v}) -> {String.to_atom(k), v} end)
+      else
+        []
+      end
 
     %{
       method: method,
