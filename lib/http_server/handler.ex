@@ -95,7 +95,7 @@ defmodule HttpServer.Handler do
 
   defp wait_for(duration) do
     if duration > 0 do
-      current_pid = self
+      current_pid = self()
       spawn fn ->
         :timer.sleep(duration)
         send current_pid, :completed
