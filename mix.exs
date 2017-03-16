@@ -26,8 +26,8 @@ defmodule HttpServer.Mixfile do
   def deps(:dev) do
     deps(:prod) ++
       [
-        {:ibrowse,"~> 4.2.2"},
-        {:httpotion, "~> 2.1.0"}
+        {:ibrowse,"~> 4.4"},
+        {:httpotion, "~> 3.0"}
       ]
   end
 
