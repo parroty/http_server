@@ -12,7 +12,7 @@ defmodule HttpServer.Mixfile do
   # Configuration for the OTP application
   def application do
     [
-      applications: [:crypto, :cowboy],
+      applications: [:crypto, :cowboy, :httpotion],
       mod: { HttpServer, [] }
     ]
   end

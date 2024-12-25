@@ -1,0 +1,32 @@
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        include:
+          - otp: '26.0'
+            elixir: '1.15'
+          - otp: '27.0'
+            elixir: '1.17'
+    env:
+      MIX_ENV: test
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: erlef/setup-beam@v1
+        with:
+         otp-version: ${{ matrix.otp }}
+         elixir-version: ${{ matrix.elixir }}
+      - uses: actions/cache@v4
+        with:
+         path: deps
+         key: ${{ runner.os }}-${{ matrix.elixir }}-otp${{ matrix.otp }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+         restore-keys: |
+           ${{ runner.os }}-${{ matrix.elixir }}-otp${{ matrix.otp }}-mix-
+      - run: mix deps.get
+      - run: mix test
